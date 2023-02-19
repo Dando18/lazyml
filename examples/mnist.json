@@ -1,0 +1,15 @@
+{
+    "data": {
+        "train": "./datasets/mnist_train.csv",
+        "test": "./datasets/mnist_test.csv"
+    },
+    "preprocess": [
+        {"name": "normalize", "all-columns-except": ["label"]}
+    ],
+    "train": {
+        "task": "classification",
+        "y_columns": ["label"],
+        "metrics": ["accuracy"],
+        "models": ["Dummy", "Ridge"]
+    }
+}

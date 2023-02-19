@@ -1,0 +1,22 @@
+{
+    "data": {
+        "train": "./datasets/student-alcohol-consumption-math.csv",
+        "test_split": "0.2"
+    },
+    "preprocess": [
+        {"name": "normalize", "columns": ["age", "Medu", "Fedu", "traveltime", "studytime", "failures", "famrel", 
+            "freetime", "goout", "Walc", "Dalc", "health", "absences"]},
+        {"name": "encode", "columns": ["school", "sex", "address", "famsize", "Pstatus", "schoolsup", "famsup", "paid",
+            "activities", "nursery", "higher", "internet", "romantic"]},
+        {"name": "one_hot_encode", "columns": ["Mjob", "Fjob", "reason", "guardian"]}
+    ],
+    "train": {
+        "task": "regression",
+        "X_columns": ["school", "sex", "age", "address", "Pstatus", "Medu", "Fedu", "Mjob", "Fjob", "reason", "guardian",
+            "famsize", "traveltime", "studytime", "failures", "schoolsup", "famsup", "paid", "activities", "nursery", 
+            "higher", "internet", "romantic", "famrel", "freetime", "goout", "health", "absences", "Walc", "Dalc"],
+        "y_columns": ["G3"],
+        "metrics": ["neg_mean_absolute_error"],
+        "models": "all"
+    }
+}

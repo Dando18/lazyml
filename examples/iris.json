@@ -1,0 +1,17 @@
+{
+    "data": {
+        "train": "./datasets/iris.csv",
+        "test_split": "0.2",
+        "drop": ["Id"]
+    },
+    "preprocess": [
+        {"name": "normalize", "columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]}
+    ],
+    "train": {
+        "task": "classification",
+        "X_columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"],
+        "y_columns": ["Species"],
+        "metrics": ["accuracy"],
+        "models": "all-tuned"
+    }
+}

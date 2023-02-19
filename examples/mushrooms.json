@@ -1,0 +1,16 @@
+{
+    "data": {
+        "train": "./datasets/mushrooms.csv",
+        "test_split": "0.4"
+    },
+    "preprocess": [
+        {"name": "one_hot_encode", "all-columns-except": ["class", "bruises", "gill-size", "stalk-shape", "veil-type"]},
+        {"name": "encode", "columns": ["class", "bruises", "gill-size", "stalk-shape", "veil-type"]}
+    ],
+    "train": {
+        "task": "classification",
+        "y_columns": ["class"],
+        "metrics": ["accuracy", "f1"],
+        "models": ["Dummy", "RandomForest", "SGD", "AdaBoost", "SVM"]
+    }
+}
