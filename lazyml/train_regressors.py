@@ -55,7 +55,43 @@ REGRESSORS_MAP_ = {
 }
 
 
-TUNING_PARAMETERS_MAP_ = {"Dummy": {"strategy": ["mean", "median"]}}
+TUNING_PARAMETERS_MAP_ = {
+    "Dummy": {"strategy": ["mean", "median"]},
+    "Linear": {"fit_intercept": [True, False]},
+    "Ridge": {"alpha": [0.01, 0.1, 1, 10], "fit_intercept": [True, False]},
+    "Lasso": {"alpha": [0.01, 0.1, 1, 10], "fit_intercept": [True, False]},
+    "SGD": {
+        "loss": ["huber", "squared_error"],
+        "penalty": ["l2", "l1", "elasticnet", None],
+        "fit_intercept": [True, False],
+        "learning_rate": ["constant", "optimal", "invscaling", "adaptive"],
+        "eta0": [1e-2, 1e-1, 1.0],
+    },
+    "PassiveAggressive": {"C": [0.1, 1, 10], "fit_intercept": [True, False]},
+    "Poisson": {"alpha": [0.01, 0.1, 1, 10], "fit_intercept": [True, False]},
+    "KNeighbors": {
+        "n_neighbors": [1, 3, 5, 7],
+        "weights": ["uniform", "distance"],
+        "p": [1, 2],
+    },
+    "AdaBoost": {"n_estimators": [1, 10, 50, 100], "learning_rate": [0.01, 0.1, 1.0]},
+    "GradientBoosting": {
+        "n_estimators": [1, 10, 50, 100],
+        "learning_rate": [0.01, 0.1, 1.0],
+    },
+    "RandomForest": {
+        "criterion": ["squared_error", "friedman_mse", "absolute_error", "poisson"],
+        "n_estimators": [1, 10, 50, 100],
+    },
+    "DecisionTree": {"criterion": ["squared_error", "friedman_mse", "absolute_error", "poisson"]},
+    "MLP": {"hidden_layer_sizes": [(100,), (128, 64, 32), (256, 128, 64)]},
+    "SVM": {
+        "C": [0.1, 1, 10],
+        "kernel": ["linear", "poly", "rbf", "sigmoid"],
+        "degree": [2, 3, 8],
+    },
+    "LinearSVM": {"C": [0.1, 1, 10], "fit_intercept": [True, False]},
+}
 
 
 def get_models_(models: Union[Iterable[Union[str, dict]], str]) -> list:
