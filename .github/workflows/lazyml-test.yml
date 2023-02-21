@@ -40,3 +40,7 @@ jobs:
     - name: Regression test
       run: |
         python lazyml.py tests/test-winequality.json
+    - name: Dimensionality reduction test
+      run: |
+        python lazyml.py tests/test-pca.json
+        python lazyml.py tests/test-lda.json

@@ -130,6 +130,7 @@ def train_classifiers(
         X_train, X_test = reduce_dimensionality(
             dim_reduce_config["name"],
             X_train,
+            y_train,
             X_test,
             **without(dim_reduce_config, "name")
         )
