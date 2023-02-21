@@ -9,7 +9,9 @@ def reduce_dimensionality(name, X_train, y_train, X_test, **kwargs):
     elif name == "LDA":
         from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
-        if "n_components" in kwargs and int(kwargs["n_components"]) >= len(set(y_train)):
+        if "n_components" in kwargs and int(kwargs["n_components"]) >= len(
+            set(y_train)
+        ):
             raise ValueError("LDA requires n_components < n_classes.")
 
         lda = LinearDiscriminantAnalysis(**kwargs)
