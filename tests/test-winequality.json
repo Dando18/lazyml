@@ -6,7 +6,7 @@
         "test_split": 0.4
     },
     "preprocess": [
-        {"name": "normalize", "all-columns-except": ["quality"]}
+        {"name": "scale", "all-columns-except": ["quality"]}
     ],
     "train": {
         "task": "regression",

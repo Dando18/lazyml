@@ -4,7 +4,7 @@
         "test_split": "0.2"
     },
     "preprocess": [
-        {"name": "normalize", "columns": ["sepal.length", "sepal.width", "petal.length", "petal.width"]}
+        {"name": "scale", "columns": ["sepal.length", "sepal.width", "petal.length", "petal.width"]}
     ],
     "train": {
         "task": "classification",

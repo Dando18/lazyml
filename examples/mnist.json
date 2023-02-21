@@ -4,7 +4,7 @@
         "test": "./datasets/mnist_test.csv"
     },
     "preprocess": [
-        {"name": "normalize", "all-columns-except": ["label"]}
+        {"name": "minmax_scale", "all-columns-except": ["label"]}
     ],
     "train": {
         "task": "classification",
