@@ -8,11 +8,16 @@ from typing import Iterable, Optional
 import pandas as pd
 
 
+# local imports
+from .util import unlistify
+
+
 def get_dataset(
     train: PathLike,
     test: Optional[PathLike] = None,
     test_split: float = 0.1,
     seed: int = 42,
+    sep: Optional[str] = ",",
     drop: Optional[Iterable[str]] = None,
     dropna: Optional[Iterable[str]] = None,
 ):
@@ -22,6 +27,7 @@ def get_dataset(
         test_fpath=test,
         test_split=test_split,
         seed=seed,
+        sep=sep,
         drop_columns=drop,
         dropna_columns=dropna,
     )
@@ -38,13 +44,27 @@ class Dataset:
         test_fpath: Optional[PathLike] = None,
         test_split: float = 0.1,
         seed: int = 42,
+        sep: Optional[str] = ",",
         drop_columns: Optional[Iterable[str]] = None,
         dropna_columns: Optional[Iterable[str]] = None,
     ):
-        self.train = pd.read_csv(train_fpath)
+        train_fpath = unlistify(train_fpath)
+        if isinstance(train_fpath, list):
+            self.train = pd.concat(
+                (pd.read_csv(fpath, sep=sep) for fpath in train_fpath),
+                ignore_index=True,
+            )
+        else:
+            self.train = pd.read_csv(train_fpath, sep=sep)
 
         if test_fpath:
-            self.test = pd.read_csv(test_fpath)
+            if isinstance(test_fpath, list):
+                self.test = pd.concat(
+                    (pd.read_csv(fpath, sep=sep) for fpath in test_fpath),
+                    ignore_index=True,
+                )
+            else:
+                self.test = pd.read_csv(test_fpath, sep=sep)
         else:
             self.test = self.train.sample(frac=test_split, random_state=seed)
             self.train = self.train.drop(self.test.index)
