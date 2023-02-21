@@ -1,3 +1,8 @@
+''' Functions for training regressors.
+    author: Daniel Nichols
+    date: February, 2022
+'''
+
 # std imports
 import logging
 from typing import Iterable, Optional, Union
@@ -11,18 +16,16 @@ from sklearn.ensemble import AdaBoostRegressor, GradientBoostingRegressor, Rando
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.linear_model import LinearRegression, Ridge, SGDRegressor, PassiveAggressiveRegressor, \
                                  PoissonRegressor, Lasso
-from sklearn.metrics import get_scorer
-from sklearn.model_selection import cross_validate, GridSearchCV
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR, LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 
-
 # local imports
 from dataset import Dataset
 from dimensionality_reduction import reduce_dimensionality
-from util import unlistify, without, expand_one_hot_columns
+from util import unlistify, without, expand_one_hot_columns, get_model_best
+
 
 # GaussianProcessRegressor is excluded because it always crashes for me
 REGRESSORS_MAP_ = {
@@ -49,78 +52,7 @@ TUNING_PARAMETERS_MAP_ = {
 }
 
 
-
-def mean_and_std_(arr : np.ndarray, title : str):
-    return { f'mean_{title}': np.mean(arr), f'std_{title}': np.std(arr) }
-
-
-def format_params(params : dict) -> dict:
-    for key, value in params.items():
-        if value in ['true', 'True', 'false', 'False']:
-            params[key] = (value.lower() == 'true')
-        elif hasattr(value, '__iter__'):
-            for idx, v in enumerate(value):
-                if v in ['true', 'True', 'false', 'False']:
-                    params[key][idx] = (v.lower() == 'true')
-
-
-def get_regressor_best_(
-    Regressor,
-    X : Union[np.ndarray, pd.DataFrame],
-    y : Union[np.ndarray, pd.DataFrame],
-    X_test : Union[np.ndarray, pd.DataFrame],
-    y_test : Union[np.ndarray, pd.DataFrame],
-    metrics : Iterable[str],
-    tune : Optional[dict] = None,
-    seed : int = 42,
-    **params
-):
-    ''' Find an approximate best score from reg on X and y.
-    '''
-    logging.debug(f'Training classifier: {Regressor.__name__}')
-    reg = Regressor(**params)
-    results = []
-
-    if tune:
-        format_params(tune)
-        search = GridSearchCV(reg, tune, scoring=metrics, refit=False)
-        search.fit(X, y)
-
-        df = pd.DataFrame(search.cv_results_)
-        # for each metric choose first row where rank_test_metric is 1
-        for metric in metrics:
-            best = df[df[f'rank_test_{metric}'] == 1].iloc[0]
-            reg.set_params(**best['params'])
-            reg.fit(X_test, y_test)
-            y_true, y_pred = y_test, reg.predict(X_test)
-
-            metric_results = {'model': Regressor.__name__}
-            metric_results.update({'mean_time': best['mean_fit_time'],  'std_time': best['std_fit_time'], 
-                'params': best['params']})
-            metric_results.update({f'mean_{m}': best[f'mean_test_{m}'] for m in metrics})
-            metric_results.update({f'std_{m}': best[f'std_test_{m}'] for m in metrics})
-            metric_results.update({f'test_{m}' : get_scorer(m)._score_func(y_true, y_pred) for m in metrics})
-            results.append(metric_results)
-    else:
-        cv_results = cross_validate(reg, X, y, scoring=metrics)
-        reg.fit(X, y)
-        y_true, y_pred = y_test, reg.predict(X_test)
-
-        tmp = {'model': Regressor.__name__}
-        tmp.update(mean_and_std_(cv_results['fit_time'], 'time'))
-        for metric in metrics:
-            tmp.update(mean_and_std_(cv_results[f'test_{metric}'], metric))
-
-            score = get_scorer(metric)._score_func(y_true, y_pred)
-            tmp[f'test_{metric}'] = score
-
-        results.append(tmp)
-    
-    return results
-
-
-
-def get_models_(models : Union[Iterable[Union[str,dict]], str]):
+def get_models_(models : Union[Iterable[Union[str,dict]], str]) -> list:
     if models == 'all':
         return list(zip(REGRESSORS_MAP_.values(), [None]*len(REGRESSORS_MAP_)))
     elif models == 'all-tuned':
@@ -171,7 +103,7 @@ def train_regressors(
     models = get_models_(models)
     for Reg, params in alive_it(models, title='Training'):
         try:
-            scores = get_regressor_best_(Reg, X_train, y_train, X_test, y_test, metrics, tune=params)
+            scores = get_model_best(Reg, X_train, y_train, X_test, y_test, metrics, tune=params)
             results.extend(scores)
         except Exception as e:
             logging.debug(f'Regressor {Reg.__name__} failed.')

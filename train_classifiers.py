@@ -10,8 +10,6 @@ from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier, RandomForestClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.linear_model import RidgeClassifier, SGDClassifier, Perceptron
-from sklearn.metrics import get_scorer
-from sklearn.model_selection import cross_validate, GridSearchCV
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
@@ -21,7 +19,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 # local imports
 from dataset import Dataset
-from util import unlistify, without, expand_one_hot_columns
+from util import unlistify, without, expand_one_hot_columns, get_model_best
 
 
 CLASSIFIER_MAP_ = {
@@ -60,77 +58,6 @@ TUNING_PARAMETERS_MAP_ = {
     'SVM': {'C': [0.1, 1, 10], 'kernel': ['linear', 'poly', 'rbf', 'sigmoid'], 'degree': [2, 3, 8]},
     'LinearSVM': {'C': [0.1, 1, 10], 'fit_intercept': [True, False]}
 }
-
-
-
-def mean_and_std_(arr : np.ndarray, title : str):
-    return { f'mean_{title}': np.mean(arr), f'std_{title}': np.std(arr) }
-
-
-def format_params(params : dict) -> dict:
-    for key, value in params.items():
-        if value in ['true', 'True', 'false', 'False']:
-            params[key] = (value.lower() == 'true')
-        elif hasattr(value, '__iter__'):
-            for idx, v in enumerate(value):
-                if v in ['true', 'True', 'false', 'False']:
-                    params[key][idx] = (v.lower() == 'true')
-
-
-def get_classifier_best_(
-    Classifier,
-    X : Union[np.ndarray, pd.DataFrame],
-    y : Union[np.ndarray, pd.DataFrame],
-    X_test : Union[np.ndarray, pd.DataFrame],
-    y_test : Union[np.ndarray, pd.DataFrame],
-    metrics : Iterable[str],
-    tune : Optional[dict] = None,
-    seed : int = 42,
-    **params
-):
-    ''' Find an approximate best score from clf on X and y.
-    '''
-    logging.debug(f'Training classifier: {Classifier.__name__}')
-    clf = Classifier(**params)
-    results = []
-
-    if tune:
-        format_params(tune)
-        search = GridSearchCV(clf, tune, scoring=metrics, refit=False)
-        search.fit(X, y)
-
-        df = pd.DataFrame(search.cv_results_)
-        # for each metric choose first row where rank_test_metric is 1
-        for metric in metrics:
-            best = df[df[f'rank_test_{metric}'] == 1].iloc[0]
-            clf.set_params(**best['params'])
-            clf.fit(X_test, y_test)
-            y_true, y_pred = y_test, clf.predict(X_test)
-
-            metric_results = {'model': Classifier.__name__}
-            metric_results.update({'mean_time': best['mean_fit_time'],  'std_time': best['std_fit_time'], 
-                'params': best['params']})
-            metric_results.update({f'mean_{m}': best[f'mean_test_{m}'] for m in metrics})
-            metric_results.update({f'std_{m}': best[f'std_test_{m}'] for m in metrics})
-            metric_results.update({f'test_{m}' : get_scorer(m)._score_func(y_true, y_pred) for m in metrics})
-            results.append(metric_results)
-    else:
-        cv_results = cross_validate(clf, X, y, scoring=metrics)
-        clf.fit(X, y)
-        y_true, y_pred = y_test, clf.predict(X_test)
-
-        tmp = {'model': Classifier.__name__}
-        tmp.update(mean_and_std_(cv_results['fit_time'], 'time'))
-        for metric in metrics:
-            tmp.update(mean_and_std_(cv_results[f'test_{metric}'], metric))
-
-            score = get_scorer(metric)._score_func(y_true, y_pred)
-            tmp[f'test_{metric}'] = score
-
-        results.append(tmp)
-    
-    return results
-
 
 
 def get_models_(models : Union[Iterable[Union[str,dict]], str]):
@@ -183,7 +110,7 @@ def train_classifiers(
     results = []
     models = get_models_(models)
     for Clf, params in alive_it(models, title='Training'):
-        scores = get_classifier_best_(Clf, X_train, y_train, X_test, y_test, metrics, tune=params)
+        scores = get_model_best(Clf, X_train, y_train, X_test, y_test, metrics, tune=params)
         results.extend(scores)
 
     return pd.DataFrame(results)
