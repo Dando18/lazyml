@@ -28,6 +28,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.svm import SVR, LinearSVR
 from sklearn.tree import DecisionTreeRegressor
+from xgboost import XGBRegressor
 
 # local imports
 from .dataset import Dataset
@@ -52,6 +53,7 @@ REGRESSORS_MAP_ = {
     "MLP": MLPRegressor,
     "SVM": SVR,
     "LinearSVM": LinearSVR,
+    "XGB": XGBRegressor,
 }
 
 
@@ -93,6 +95,7 @@ TUNING_PARAMETERS_MAP_ = {
         "degree": [2, 3, 8],
     },
     "LinearSVM": {"C": [0.1, 1, 10], "fit_intercept": [True, False]},
+    "XGB": {"n_estimators": [1, 10, 100, 200]},
 }
 
 

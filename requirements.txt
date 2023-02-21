@@ -1,4 +1,5 @@
 numpy
 pandas
 scikit-learn
+xgboost
 alive-progress

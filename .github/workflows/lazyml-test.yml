@@ -36,10 +36,10 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Classification test
       run: |
-        python lazyml.py tests/test-iris.json
+        python lazyml.py tests/test-classification.json
     - name: Regression test
       run: |
-        python lazyml.py tests/test-winequality.json
+        python lazyml.py tests/test-regression.json
     - name: Dimensionality reduction test
       run: |
         python lazyml.py tests/test-pca.json

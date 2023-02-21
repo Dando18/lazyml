@@ -1,4 +1,5 @@
 # std imports
+import logging
 from typing import Iterable, Optional, Union
 
 # tpl imports
@@ -17,6 +18,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 
 
 # local imports
@@ -40,6 +42,7 @@ CLASSIFIER_MAP_ = {
     "MLP": MLPClassifier,
     "SVM": SVC,
     "LinearSVM": LinearSVC,
+    "XGB": XGBClassifier,
 }
 
 
@@ -81,6 +84,7 @@ TUNING_PARAMETERS_MAP_ = {
         "degree": [2, 3, 8],
     },
     "LinearSVM": {"C": [0.1, 1, 10], "fit_intercept": [True, False]},
+    "XGB": {"n_estimators": [1, 10, 100, 200]},
 }
 
 
@@ -108,7 +112,7 @@ def train_classifiers(
     y_columns: Optional[Union[str, Iterable[str]]] = None,
     metrics: Iterable[str] = ["accuracy"],
     dim_reduce_config: Optional[dict] = None,
-    **kwargs
+    **kwargs,
 ):
     """Train each model on the dataset and return the best for each model."""
     if X_columns is None and y_columns is None:
@@ -132,15 +136,20 @@ def train_classifiers(
             X_train,
             y_train,
             X_test,
-            **without(dim_reduce_config, "name")
+            **without(dim_reduce_config, "name"),
         )
 
     results = []
     models = get_models_(models)
     for Clf, params in alive_it(models, title="Training"):
-        scores = get_model_best(
-            Clf, X_train, y_train, X_test, y_test, metrics, tune=params
-        )
-        results.extend(scores)
+        try:
+            scores = get_model_best(
+                Clf, X_train, y_train, X_test, y_test, metrics, tune=params
+            )
+            results.extend(scores)
+        except Exception as e:
+            logging.debug(f"Classifier {Clf.__name__} failed.")
+            logging.exception(e)
+            continue
 
     return pd.DataFrame(results)
