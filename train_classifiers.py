@@ -21,7 +21,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 # local imports
 from dataset import Dataset
-from util import unlistify, without
+from util import unlistify, without, expand_one_hot_columns
 
 
 CLASSIFIER_MAP_ = {
@@ -153,6 +153,7 @@ def train_classifiers(
     X_columns : Optional[Union[str, Iterable[str]]] = None, 
     y_columns : Optional[Union[str, Iterable[str]]] = None, 
     metrics : Iterable[str] = ['accuracy'],
+    dim_reduce_config : Optional[dict] = None,
     **kwargs
 ):
     ''' Train each model on the dataset and return the best for each model.
@@ -164,10 +165,20 @@ def train_classifiers(
         X_columns = dataset.all_columns_except(y_columns)
     if y_columns is None:
         y_columns = dataset.all_columns_except(X_columns)
+    
+    X_columns = expand_one_hot_columns(X_columns, dataset)
+    y_columns = expand_one_hot_columns(y_columns, dataset)
 
     y_columns = unlistify(y_columns)
     X_train, y_train = dataset.train[X_columns], dataset.train[y_columns]
     X_test, y_test = dataset.test[X_columns], dataset.test[y_columns]
+
+    if dim_reduce_config:
+        X_train, X_test = reduce_dimensionality(
+                                dim_reduce_config['name'], 
+                                X_train, X_test, 
+                                **without(dim_reduce_config, 'name')
+                            )
 
     results = []
     models = get_models_(models)

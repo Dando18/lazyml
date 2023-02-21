@@ -139,10 +139,10 @@ def train_regressors(
     models : Union[Iterable[Union[str,dict]], str], 
     X_columns : Optional[Union[str, Iterable[str]]] = None, 
     y_columns : Optional[Union[str, Iterable[str]]] = None, 
-    metrics : Iterable[str] = ['accuracy'],
+    metrics : Iterable[str] = ['neg_mean_absolute_error', 'r2'],
     dim_reduce_config : Optional[dict] = None,
     **kwargs
-):
+) -> pd.DataFrame:
     ''' Train each model on the dataset and return the best for each model.
     '''
     if X_columns is None and y_columns is None:
