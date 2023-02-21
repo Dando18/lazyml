@@ -17,6 +17,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 
 
 # local imports
@@ -40,6 +41,7 @@ CLASSIFIER_MAP_ = {
     "MLP": MLPClassifier,
     "SVM": SVC,
     "LinearSVM": LinearSVC,
+    "XGB": XGBClassifier,
 }
 
 
@@ -81,6 +83,7 @@ TUNING_PARAMETERS_MAP_ = {
         "degree": [2, 3, 8],
     },
     "LinearSVM": {"C": [0.1, 1, 10], "fit_intercept": [True, False]},
+    "XGB": {"n_estimators": [1, 10, 100, 200]},
 }
 
 
