@@ -55,7 +55,21 @@ REGRESSORS_MAP_ = {
 }
 
 
-TUNING_PARAMETERS_MAP_ = {"Dummy": {"strategy": ["mean", "median"]}}
+TUNING_PARAMETERS_MAP_ = {
+    "Dummy": {"strategy": ["mean", "median"]},
+    "KNeighbors": {
+        "n_neighbors": [1, 3, 5, 7],
+        "weights": ["uniform", "distance"],
+        "p": [1, 2],
+    },
+    "MLP": {"hidden_layer_sizes": [(100,), (128, 64, 32), (256, 128, 64)]},
+    "SVM": {
+        "C": [0.1, 1, 10],
+        "kernel": ["linear", "poly", "rbf", "sigmoid"],
+        "degree": [2, 3, 8],
+    },
+    "LinearSVM": {"C": [0.1, 1, 10], "fit_intercept": [True, False]},
+}
 
 
 def get_models_(models: Union[Iterable[Union[str, dict]], str]) -> list:
