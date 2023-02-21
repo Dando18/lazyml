@@ -18,8 +18,8 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 # local imports
-from dataset import Dataset
-from util import unlistify, without, expand_one_hot_columns, get_model_best
+from .dataset import Dataset
+from .util import unlistify, without, expand_one_hot_columns, get_model_best
 
 
 CLASSIFIER_MAP_ = {

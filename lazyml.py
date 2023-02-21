@@ -9,11 +9,11 @@ import logging
 from alive_progress import alive_it
 
 # local imports
-from util import without, parse_columns
-from dataset import get_dataset
-from preprocess import preprocess
-from train_classifiers import train_classifiers
-from train_regressors import train_regressors
+from lazyml.util import without, parse_columns
+from lazyml.dataset import get_dataset
+from lazyml.preprocess import preprocess
+from lazyml.train_classifiers import train_classifiers
+from lazyml.train_regressors import train_regressors
 
 # turn off sklearn warnings
 import warnings

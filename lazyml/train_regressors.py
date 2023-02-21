@@ -22,9 +22,9 @@ from sklearn.svm import SVR, LinearSVR
 from sklearn.tree import DecisionTreeRegressor
 
 # local imports
-from dataset import Dataset
-from dimensionality_reduction import reduce_dimensionality
-from util import unlistify, without, expand_one_hot_columns, get_model_best
+from .dataset import Dataset
+from .dimensionality_reduction import reduce_dimensionality
+from .util import unlistify, without, expand_one_hot_columns, get_model_best
 
 
 # GaussianProcessRegressor is excluded because it always crashes for me

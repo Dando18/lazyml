@@ -7,7 +7,7 @@ Not meant to be a black-box prediction tool.
 ## Usage
 The script takes a configuration _json_ file to define data, preprocessing,
 and training parameters.
-It is run as `python3 main.py <config.json>`.
+It is run as `python3 lazyml.py <config.json>`.
 See [examples dir](examples/) for example config files.
 Here's a simple classification config for the UCI iris dataset:
 
