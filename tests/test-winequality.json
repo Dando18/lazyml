@@ -1,0 +1,17 @@
+{
+    "data": {
+        "train": ["https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv",
+                  "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"],
+        "sep": ";",
+        "test_split": 0.4
+    },
+    "preprocess": [
+        {"name": "normalize", "all-columns-except": ["quality"]}
+    ],
+    "train": {
+        "task": "regression",
+        "y_columns": ["quality"],
+        "metrics": ["neg_mean_absolute_error"],
+        "models": "all"
+    }
+}
