@@ -83,7 +83,9 @@ TUNING_PARAMETERS_MAP_ = {
         "criterion": ["squared_error", "friedman_mse", "absolute_error", "poisson"],
         "n_estimators": [1, 10, 50, 100],
     },
-    "DecisionTree": {"criterion": ["squared_error", "friedman_mse", "absolute_error", "poisson"]},
+    "DecisionTree": {
+        "criterion": ["squared_error", "friedman_mse", "absolute_error", "poisson"]
+    },
     "MLP": {"hidden_layer_sizes": [(100,), (128, 64, 32), (256, 128, 64)]},
     "SVM": {
         "C": [0.1, 1, 10],

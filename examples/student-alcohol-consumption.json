@@ -4,7 +4,7 @@
         "test_split": "0.2"
     },
     "preprocess": [
-        {"name": "normalize", "columns": ["age", "Medu", "Fedu", "traveltime", "studytime", "failures", "famrel", 
+        {"name": "scale", "columns": ["age", "Medu", "Fedu", "traveltime", "studytime", "failures", "famrel", 
             "freetime", "goout", "Walc", "Dalc", "health", "absences"]},
         {"name": "encode", "columns": ["school", "sex", "address", "famsize", "Pstatus", "schoolsup", "famsup", "paid",
             "activities", "nursery", "higher", "internet", "romantic"]},

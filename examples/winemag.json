@@ -6,7 +6,7 @@
         "dropna": ["price"]
     },
     "preprocess": [
-        {"name": "normalize", "columns": ["price"]},
+        {"name": "scale", "columns": ["price"]},
         {"name": "one_hot_encode", "columns": ["country", "province", "taster_name", "variety"]}
     ],
     "dimensionality_reduction": {"name":"PCA", "n_components": 10},

@@ -5,7 +5,7 @@
         "drop": ["Id"]
     },
     "preprocess": [
-        {"name": "normalize", "columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]}
+        {"name": "scale", "columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]}
     ],
     "train": {
         "task": "classification",
