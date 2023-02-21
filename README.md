@@ -1,6 +1,6 @@
 # LazyML
 
-![Status Badge](https://github.com/Dando18/lazyml/actions/workflows/lazyml-test/badge.svg)
+![Status Badge](https://github.com/Dando18/lazyml/actions/workflows/lazyml-test.yml/badge.svg)
 
 A transparent autoML-like tool.
 It is meant to make testing a lot of different models on a dataset easier.
