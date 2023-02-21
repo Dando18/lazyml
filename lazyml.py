@@ -28,7 +28,7 @@ def get_args():
     parser.add_argument('-o', '--output', type=str, help='output path')
     parser.add_argument('--seed', type=int, default=42, help='seed for numpy/pandas/sklearn')
     parser.add_argument('--log', choices=['INFO', 'DEBUG', 'WARNING', 'ERROR', 'CRITICAL'],
-        default='INFO', type=str.upper, help='logging level')
+                        default='INFO', type=str.upper, help='logging level')
     return parser.parse_args()
 
 
@@ -64,11 +64,11 @@ def main():
     logging.info('Training...')
     training_config = config['train']
     if training_config['task'] == 'classification':
-        results = train_classifiers(dataset, seed=args.seed, dim_reduce_config=dim_reduce_config, 
-            **without(training_config, 'task'))
+        results = train_classifiers(dataset, seed=args.seed, dim_reduce_config=dim_reduce_config,
+                                    **without(training_config, 'task'))
     elif training_config['task'] == 'regression':
-        results = train_regressors(dataset, seed=args.seed, dim_reduce_config=dim_reduce_config, 
-            **without(training_config, 'task'))
+        results = train_regressors(dataset, seed=args.seed, dim_reduce_config=dim_reduce_config,
+                                   **without(training_config, 'task'))
     logging.info('Done training.')
 
     # save
@@ -76,7 +76,6 @@ def main():
         results.to_csv(args.output)
     else:
         print(results)
-    
 
 
 if __name__ == '__main__':
