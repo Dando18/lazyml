@@ -1,4 +1,5 @@
 # std imports
+import logging
 from typing import Iterable, Optional, Union
 
 # tpl imports
@@ -111,7 +112,7 @@ def train_classifiers(
     y_columns: Optional[Union[str, Iterable[str]]] = None,
     metrics: Iterable[str] = ["accuracy"],
     dim_reduce_config: Optional[dict] = None,
-    **kwargs
+    **kwargs,
 ):
     """Train each model on the dataset and return the best for each model."""
     if X_columns is None and y_columns is None:
@@ -135,15 +136,20 @@ def train_classifiers(
             X_train,
             y_train,
             X_test,
-            **without(dim_reduce_config, "name")
+            **without(dim_reduce_config, "name"),
         )
 
     results = []
     models = get_models_(models)
     for Clf, params in alive_it(models, title="Training"):
-        scores = get_model_best(
-            Clf, X_train, y_train, X_test, y_test, metrics, tune=params
-        )
-        results.extend(scores)
+        try:
+            scores = get_model_best(
+                Clf, X_train, y_train, X_test, y_test, metrics, tune=params
+            )
+            results.extend(scores)
+        except Exception as e:
+            logging.debug(f"Classifier {Clf.__name__} failed.")
+            logging.exception(e)
+            continue
 
     return pd.DataFrame(results)
