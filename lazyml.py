@@ -98,7 +98,7 @@ def main():
     for metric in result_columns:
         metric_name = metric[len("test_"):]
         best_row = results.loc[results[metric].idxmax()]
-        n_others = len(results[results[metric] == best_row[metric]]["model"].to_list())
+        n_others = len(results[results[metric] == best_row[metric]]["model"].to_list()) - 1
         logging.info(
             f"{best_row['model']} has the highest {metric_name} at {best_row[metric]} ({n_others} others)"
         )
