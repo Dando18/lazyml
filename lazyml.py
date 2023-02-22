@@ -82,16 +82,26 @@ def main():
             dataset,
             seed=args.seed,
             dim_reduce_config=dim_reduce_config,
-            **without(training_config, "task")
+            **without(training_config, "task"),
         )
     elif training_config["task"] == "regression":
         results = train_regressors(
             dataset,
             seed=args.seed,
             dim_reduce_config=dim_reduce_config,
-            **without(training_config, "task")
+            **without(training_config, "task"),
         )
     logging.info("Done training.")
+
+    # log best
+    result_columns = results.columns[results.columns.str.startswith("test_")]
+    for metric in result_columns:
+        metric_name = metric[len("test_"):]
+        best_row = results.loc[results[metric].idxmax()]
+        n_others = len(results[results[metric] == best_row[metric]]["model"].to_list())
+        logging.info(
+            f"{best_row['model']} has the highest {metric_name} at {best_row[metric]} ({n_others} others)"
+        )
 
     # save
     if args.output:
