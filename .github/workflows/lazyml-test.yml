@@ -40,6 +40,9 @@ jobs:
     - name: Regression test
       run: |
         python lazyml.py tests/test-regression.json
+    - name: Clustering test
+      run: |
+        python lazyml.py tests/test-clustering.json
     - name: Dimensionality reduction test
       run: |
         python lazyml.py tests/test-pca.json
