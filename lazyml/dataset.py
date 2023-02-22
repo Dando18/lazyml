@@ -15,13 +15,14 @@ from .util import unlistify
 def get_dataset(
     train: PathLike,
     test: Optional[PathLike] = None,
-    test_split: float = 0.1,
+    test_split: Optional[float] = None,
     seed: int = 42,
     sep: Optional[str] = ",",
     drop: Optional[Iterable[str]] = None,
     dropna: Optional[Iterable[str]] = None,
 ):
-    test_split = float(test_split)
+    if test_split:
+        test_split = float(test_split)
     return Dataset(
         train,
         test_fpath=test,
@@ -42,7 +43,7 @@ class Dataset:
         self,
         train_fpath: PathLike,
         test_fpath: Optional[PathLike] = None,
-        test_split: float = 0.1,
+        test_split: Optional[float] = None,
         seed: int = 42,
         sep: Optional[str] = ",",
         drop_columns: Optional[Iterable[str]] = None,
@@ -65,9 +66,11 @@ class Dataset:
                 )
             else:
                 self.test = pd.read_csv(test_fpath, sep=sep)
-        else:
+        elif test_split:
             self.test = self.train.sample(frac=test_split, random_state=seed)
             self.train = self.train.drop(self.test.index)
+        else:
+            self.test = pd.DataFrame().reindex_like(self.train)
 
         if drop_columns:
             self.train.drop(columns=drop_columns, inplace=True)
@@ -78,6 +81,9 @@ class Dataset:
             self.test.dropna(subset=dropna_columns, inplace=True)
 
         self.one_hot_map_ = {}
+
+    def has_testing_set(self) -> bool:
+        return self.test.shape[0] > 0
 
     def is_one_hot_column(self, column_name: str) -> bool:
         return column_name in self.one_hot_map_

@@ -14,6 +14,7 @@ from lazyml.dataset import get_dataset
 from lazyml.preprocess import preprocess
 from lazyml.train_classifiers import train_classifiers
 from lazyml.train_regressors import train_regressors
+from lazyml.train_clustering import train_clustering
 
 # turn off sklearn warnings
 import warnings
@@ -21,6 +22,7 @@ from sklearn.exceptions import ConvergenceWarning
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 def get_args():
@@ -91,14 +93,23 @@ def main():
             dim_reduce_config=dim_reduce_config,
             **without(training_config, "task"),
         )
+    elif training_config["task"] == "clustering":
+        results = train_clustering(
+            dataset,
+            seed=args.seed,
+            dim_reduce_config=dim_reduce_config,
+            **without(training_config, "task"),
+        )
     logging.info("Done training.")
 
     # log best
     result_columns = results.columns[results.columns.str.startswith("test_")]
     for metric in result_columns:
-        metric_name = metric[len("test_"):]
+        metric_name = metric[len("test_") :]
         best_row = results.loc[results[metric].idxmax()]
-        n_others = len(results[results[metric] == best_row[metric]]["model"].to_list()) - 1
+        n_others = (
+            len(results[results[metric] == best_row[metric]]["model"].to_list()) - 1
+        )
         logging.info(
             f"{best_row['model']} has the highest {metric_name} at {best_row[metric]} ({n_others} others)"
         )

@@ -11,9 +11,9 @@ def scale(dataset, columns: Iterable[str], **kwargs):
 
     scaler = StandardScaler()
     scaler.fit(dataset.train[columns])
-
     dataset.train[columns] = scaler.transform(dataset.train[columns])
-    dataset.test[columns] = scaler.transform(dataset.test[columns])
+    if dataset.has_testing_set():
+        dataset.test[columns] = scaler.transform(dataset.test[columns])
 
 
 def minmax_scale(dataset, columns: Iterable[str], **kwargs):
@@ -22,7 +22,8 @@ def minmax_scale(dataset, columns: Iterable[str], **kwargs):
     scaler = MinMaxScaler(**kwargs)
     scaler.fit(dataset.train[columns])
     dataset.train[columns] = scaler.transform(dataset.train[columns])
-    dataset.test[columns] = scaler.transform(dataset.test[columns])
+    if dataset.has_testing_set():
+        dataset.test[columns] = scaler.transform(dataset.test[columns])
 
 
 def maxabs_scale(dataset, columns: Iterable[str], **kwargs):
@@ -31,7 +32,8 @@ def maxabs_scale(dataset, columns: Iterable[str], **kwargs):
     scaler = MaxAbsScaler(**kwargs)
     scaler.fit(dataset.train[columns])
     dataset.train[columns] = scaler.transform(dataset.train[columns])
-    dataset.test[columns] = scaler.transform(dataset.test[columns])
+    if dataset.has_testing_set():
+        dataset.test[columns] = scaler.transform(dataset.test[columns])
 
 
 def normalize(dataset, columns: Iterable[str], **kwargs):
@@ -39,7 +41,8 @@ def normalize(dataset, columns: Iterable[str], **kwargs):
 
     scaler = Normalizer(**kwargs)
     dataset.train[columns] = scaler.fit_transform(dataset.train[columns])
-    dataset.test[columns] = scaler.transform(dataset.test[columns])
+    if dataset.has_testing_set():
+        dataset.test[columns] = scaler.transform(dataset.test[columns])
 
 
 def encode(dataset, columns: Iterable[str], **kwargs):
@@ -52,7 +55,8 @@ def encode(dataset, columns: Iterable[str], **kwargs):
         dataset.test = dataset.test[dataset.test[column].isin(encoder.classes_)]
 
         dataset.train[column] = encoder.transform(dataset.train[column])
-        dataset.test[column] = encoder.transform(dataset.test[column])
+        if dataset.has_testing_set():
+            dataset.test[column] = encoder.transform(dataset.test[column])
 
 
 def one_hot_encode(dataset, columns: Iterable[str], **kwargs):
@@ -66,7 +70,8 @@ def binarize(dataset, columns: Iterable[str], threshold=0.0):
     binarizer.fit(dataset.train[columns])
 
     dataset.train[columns] = binarizer.transform(dataset.train[columns])
-    dataset.test[columns] = binarizer.transform(dataset.test[columns])
+    if dataset.has_testing_set():
+        dataset.test[columns] = binarizer.transform(dataset.test[columns])
 
 
 PREPROCESSORS_MAP_ = {
