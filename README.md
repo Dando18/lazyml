@@ -15,6 +15,7 @@ It is not meant to be a black-box prediction tool.
   - [train](#train)
     - [Classification Models](#classification-models)
     - [Regression Models](#regression-models)
+    - [Clustering Models](#clustering-models)
 
 # Usage
 The script takes a configuration _json_ file to define data, preprocessing,
@@ -51,7 +52,7 @@ Here's a simple classification config for the UCI iris dataset:
 Defines what data to load and some initial preprocessing steps. Options are:
 
 - `"train":` training dataset; path/url to CSV file or list of paths and urls
-- `"test":` or `"test_split":` testing dataset; give paths/urls to CSV files or define _test\_split_ to use a portion of the training dataset for testing
+- `"test":` or `"test_split":` testing dataset; give paths/urls to CSV files or define _test\_split_ to use a portion of the training dataset for testing; omit both for no testing dataset
 - `"drop":` a list of column names to drop
 - `"dropna":` a list of column names to drop _Na_ values from
 
@@ -91,6 +92,7 @@ The type of training task is given by `"task": ...` and can be one of
 
 - `"classification"`  Train classifier(s) on the dataset.
 - `"regression"` Train regressors on the dataset.
+- `"clustering"` Cluster training dataset.
 
 The inputs to the model, _X_, and output targets, _y_, are given by `"X_columns": [...]` and `"y_columns": [...]`. If one is omitted, then it is assumed to be the converse of the other.
 
@@ -148,3 +150,16 @@ The available models for each training task are listed below.
 - `"SVM"` See [sklearn.svm.SVR](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html)
 - `"LinearSVM"` See [sklearn.svm.LinearSVR](https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVR.html)
 - `"XGB"` See [XGBoost](https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBRegressor)
+
+
+### Clustering Models
+
+- `"KMeans"` See [sklearn.cluster.KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html)
+- `"AffinityPropagation"` See [sklearn.cluster.AffinityPropagation](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AffinityPropagation.html)
+- `"MeanShift"` See [sklearn.cluster.MeanShift](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MeanShift.html)
+- `"Spectral"` See [sklearn.cluster.SpectralClustering](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.SpectralClustering.html)
+- `"Agglomerative"` See [sklearn.cluster.AgglomerativeClustering](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html)
+- `"DBSCAN"` See [sklearn.cluster.DBSCAN](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html)
+- `"OPTICS"` See [sklearn.cluster.OPTICS](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.OPTICS.html)
+- `"Birch"` See [sklearn.cluster.Birch](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.Birch.html)
+- `"BisectingKMeans"` See [sklearn.cluster.BisectingKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.BisectingKMeans.html)
