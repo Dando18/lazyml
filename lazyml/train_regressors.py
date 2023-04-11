@@ -122,7 +122,7 @@ def train_regressors(
     train: Tuple[Union[np.ndarray, pd.DataFrame]],
     test: Tuple[Union[np.ndarray, pd.DataFrame]],
     metrics: Iterable[str] = ["neg_mean_absolute_error", "r2"],
-    models_partition: Tuple[int] = (0,1),
+    models_partition: Tuple[int] = (0, 1),
     dim_reduce_config: Optional[dict] = None,
     **kwargs,
 ) -> pd.DataFrame:

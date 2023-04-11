@@ -111,7 +111,7 @@ def train_classifiers(
     train: Tuple[Union[np.ndarray, pd.DataFrame]],
     test: Tuple[Union[np.ndarray, pd.DataFrame]],
     metrics: Iterable[str] = ["accuracy"],
-    models_partition: Tuple[int] = (0,1),
+    models_partition: Tuple[int] = (0, 1),
     dim_reduce_config: Optional[dict] = None,
     **kwargs,
 ):

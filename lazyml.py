@@ -31,7 +31,9 @@ def get_args():
     parser = ArgumentParser(description="Brute force ML tool")
     parser.add_argument("config", type=str, help="config json")
     parser.add_argument("-o", "--output", type=str, help="output path")
-    parser.add_argument('-p', '--parallel', action='store_true', help='compute in parallel with MPI')
+    parser.add_argument(
+        "-p", "--parallel", action="store_true", help="compute in parallel with MPI"
+    )
     parser.add_argument(
         "--seed", type=int, default=42, help="seed for numpy/pandas/sklearn"
     )
@@ -58,13 +60,14 @@ def main():
 
     if args.parallel:
         from mpi4py import MPI
+
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
         size = comm.Get_size()
 
     with open(args.config, "r") as fp:
         config = json.load(fp)
-    
+
     # config vars
     training_config = config["train"]
     dim_reduce_config = (
@@ -84,22 +87,24 @@ def main():
         logging.info("Preprocessing...")
         for preprocess_step in alive_it(config["preprocess"], title="Preprocessing"):
             parse_columns(preprocess_step, dataset)
-            preprocess(preprocess_step["name"], dataset, **without(preprocess_step, "name"))
+            preprocess(
+                preprocess_step["name"], dataset, **without(preprocess_step, "name")
+            )
         logging.debug("Post-preprocessing columns: " + ", ".join(dataset.train.columns))
         logging.info("Done preprocessing.")
 
         # train
         training_config = config["train"]
-        if "X" in training_config and "y" in training_config:   # x and y
-            X_columns = parse_columns(training_config['X'], dataset)
-            y_columns = parse_columns(training_config['y'], dataset)
-        elif "X" in training_config:    # just x
-            X_columns = parse_columns(training_config['X'], dataset)
+        if "X" in training_config and "y" in training_config:  # x and y
+            X_columns = parse_columns(training_config["X"], dataset)
+            y_columns = parse_columns(training_config["y"], dataset)
+        elif "X" in training_config:  # just x
+            X_columns = parse_columns(training_config["X"], dataset)
             y_columns = dataset.all_columns_except(X_columns)
-        elif "y" in training_config:    # just y
-            y_columns = parse_columns(training_config['y'], dataset)
+        elif "y" in training_config:  # just y
+            y_columns = parse_columns(training_config["y"], dataset)
             X_columns = dataset.all_columns_except(y_columns)
-        else:   # no x or y
+        else:  # no x or y
             raise ValueError("Must provide at least 1 of 'X' or 'y' for training.")
 
         X_columns = expand_one_hot_columns(X_columns, dataset)
@@ -115,7 +120,7 @@ def main():
                 X_test,
                 **without(dim_reduce_config, "name"),
             )
-    
+
     if args.parallel:
         comm.barrier()
         X_train = comm.bcast(X_train, root=0)
@@ -126,8 +131,8 @@ def main():
     logging.info("Training{}...".format(f" on rank {rank}" if args.parallel else ""))
     if training_config["task"] == "classification":
         results = train_classifiers(
-            train=(X_train,y_train),
-            test=(X_test,y_test),
+            train=(X_train, y_train),
+            test=(X_test, y_test),
             seed=args.seed,
             dim_reduce_config=dim_reduce_config,
             models_partition=(rank, size) if args.parallel else (0, 1),
@@ -135,8 +140,8 @@ def main():
         )
     elif training_config["task"] == "regression":
         results = train_regressors(
-            train=(X_train,y_train),
-            test=(X_test,y_test),
+            train=(X_train, y_train),
+            test=(X_test, y_test),
             seed=args.seed,
             dim_reduce_config=dim_reduce_config,
             models_partition=(rank, size) if args.parallel else (0, 1),
@@ -144,8 +149,8 @@ def main():
         )
     elif training_config["task"] == "clustering":
         results = train_clustering(
-            train=(X_train,y_train),
-            test=(X_test,y_test),
+            train=(X_train, y_train),
+            test=(X_test, y_test),
             seed=args.seed,
             dim_reduce_config=dim_reduce_config,
             models_partition=(rank, size) if args.parallel else (0, 1),

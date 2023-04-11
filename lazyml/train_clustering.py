@@ -91,7 +91,7 @@ def train_clustering(
     train: Tuple[Union[np.ndarray, pd.DataFrame]],
     test: Tuple[Union[np.ndarray, pd.DataFrame]],
     metrics: Iterable[str] = ["rand_score"],
-    models_partition: Tuple[int] = (0,1),
+    models_partition: Tuple[int] = (0, 1),
     dim_reduce_config: Optional[dict] = None,
     **kwargs,
 ) -> pd.DataFrame:
