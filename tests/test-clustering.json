@@ -8,8 +8,8 @@
     ],
     "train": {
         "task": "clustering",
-        "X_columns": ["sepal.length", "sepal.width", "petal.length", "petal.width"],
-        "y_columns": ["variety"],
+        "X": {"columns": ["sepal.length", "sepal.width", "petal.length", "petal.width"]},
+        "y": {"columns": ["variety"]},
         "metrics": ["rand_score", "mutual_info_score"],
         "models": "all"
     }

@@ -12,8 +12,8 @@
     "dimensionality_reduction": {"name":"PCA", "n_components": 10},
     "train": {
         "task": "regression",
-        "X_columns": ["taster_name", "price", "country", "variety", "province"],
-        "y_columns": ["points"],
+        "X": {"columns": ["taster_name", "price", "country", "variety", "province"]},
+        "y": {"columns": ["points"]},
         "metrics": ["neg_mean_absolute_error"],
         "models": "all"
     }
