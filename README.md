@@ -36,8 +36,8 @@ Here's a simple classification config for the UCI iris dataset:
     ],
     "train": {
         "task": "classification",
-        "X_columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"],
-        "y_columns": ["Species"],
+        "X": {"columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]},
+        "y": {"columns": ["Species"]},
         "metrics": ["accuracy"],
         "models": "all-tuned"
     }
