@@ -1,6 +1,7 @@
 # std imports
 import copy
 import logging
+import re
 from typing import Any, Iterable, Optional, Union
 
 # tpl imports
@@ -51,7 +52,7 @@ def parse_columns(data: dict, dataset):
         dataset: dataset object
     """
     num_column_params = sum(
-        1 for k in data.keys() if k in ["columns", "all-columns-except"]
+        1 for k in data.keys() if k in ["columns", "all-columns-except", "columns-regex"]
     )
     if num_column_params > 1:
         raise ValueError("Too many column parameters")
@@ -60,6 +61,11 @@ def parse_columns(data: dict, dataset):
         pass  # do nothing in this case
     elif "all-columns-except" in data:
         data["columns"] = dataset.all_columns_except(data.pop("all-columns-except"))
+    elif "columns-regex" in data:
+        reg = re.compile(data["columns-regex"])
+        data["columns"] = list(filter(reg.match, dataset.train.columns))
+    
+    return data["columns"]
 
 
 def expand_one_hot_columns(columns: Iterable[str], dataset) -> Iterable[str]:
