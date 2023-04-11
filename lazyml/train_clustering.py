@@ -1,10 +1,11 @@
 # std imports
 import logging
 import time
-from typing import Iterable, Optional, Union
+from typing import Iterable, Optional, Tuple, Union
 
 # tpl imports
 from alive_progress import alive_it
+import numpy as np
 import pandas as pd
 from sklearn.cluster import (
     KMeans,
@@ -86,36 +87,20 @@ def get_model_best(Cls, X_train, y_train, metrics, n_iter=5, **kwargs):
 
 
 def train_clustering(
-    dataset: Dataset,
     models: Union[Iterable[Union[str, dict]], str],
-    X_columns: Optional[Union[str, Iterable[str]]] = None,
-    y_columns: Optional[Union[str, Iterable[str]]] = None,
+    train: Tuple[Union[np.ndarray, pd.DataFrame]],
+    test: Tuple[Union[np.ndarray, pd.DataFrame]],
     metrics: Iterable[str] = ["rand_score"],
+    models_partition: Tuple[int] = (0,1),
     dim_reduce_config: Optional[dict] = None,
     **kwargs,
 ) -> pd.DataFrame:
     """Train clustering algorithms"""
-    if X_columns is None and y_columns is None:
-        raise ValueError("Must provide at least 1 of 'X_columns' or 'y_columns'.")
-
-    X_columns = expand_one_hot_columns(X_columns, dataset)
-    y_columns = expand_one_hot_columns(y_columns, dataset)
-
-    y_columns = unlistify(y_columns)
-    X_train, y_train = dataset.train[X_columns], dataset.train[y_columns]
-    X_test, _ = dataset.test[X_columns], dataset.test[y_columns]
-
-    if dim_reduce_config:
-        X_train, X_test = reduce_dimensionality(
-            dim_reduce_config["name"],
-            X_train,
-            y_train,
-            X_test,
-            **without(dim_reduce_config, "name"),
-        )
+    (X_train, y_train), (X_test, y_test) = train, test
 
     results = []
     models = get_models_(models)
+    models = np.array_split(np.array(models), models_partition[1])[models_partition[0]]
     for Cls, params in alive_it(models, title="Training"):
         try:
             scores = get_model_best(Cls, X_train, y_train, metrics)
