@@ -46,6 +46,7 @@ def unlistify(x: Iterable[Any]) -> Any:
 def parse_columns(data: dict, dataset):
     """Handle `all-columns-except` option when providing columns as option. If given, then expands into the
     converse set of columns.
+    If `columns-reg` is present, then column names are expanded from regex.
 
     Args:
         data: a dict that might have some column related parameters.
@@ -62,7 +63,7 @@ def parse_columns(data: dict, dataset):
     elif "all-columns-except" in data:
         data["columns"] = dataset.all_columns_except(data.pop("all-columns-except"))
     elif "columns-regex" in data:
-        reg = re.compile(data["columns-regex"])
+        reg = re.compile(data.pop("columns-regex"))
         data["columns"] = list(filter(reg.match, dataset.train.columns))
     
     return data["columns"]
