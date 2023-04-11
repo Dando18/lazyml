@@ -19,6 +19,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: mpi4py/setup-mpi@v1
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -47,3 +48,9 @@ jobs:
       run: |
         python lazyml.py tests/test-pca.json
         python lazyml.py tests/test-lda.json
+    - name: MPI test
+      run: |
+        mpirun -np 2 python lazyml.py tests/test-classification.json -p
+        mpirun -np 4 python lazyml.py tests/test-regression.json -p
+        mpirun -np 2 python lazyml.py tests/test-clustering.json -p
+        mpirun -np 2 python lazyml.py tests/test-pca.json -p

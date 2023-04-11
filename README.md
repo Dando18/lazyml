@@ -8,6 +8,7 @@ It is not meant to be a black-box prediction tool.
 
 - [LazyML](#lazyml)
 - [Usage](#usage)
+  - [Running with MPI](#running-with-mpi)
 - [Config File Format](#config-file-format)
   - [data](#data)
   - [preprocess](#preprocess)
@@ -21,6 +22,7 @@ It is not meant to be a black-box prediction tool.
 The script takes a configuration _json_ file to define data, preprocessing,
 and training parameters.
 It is run as `python3 lazyml.py <config.json>`.
+It can also use MPI to distribute the training tasks.
 See [examples dir](examples/) for example config files.
 Here's a simple classification config for the UCI iris dataset:
 
@@ -42,6 +44,18 @@ Here's a simple classification config for the UCI iris dataset:
         "models": "all-tuned"
     }
 }
+```
+
+## Running with MPI
+The script can be run with MPI to distribute the training work 
+between processors.
+The python package mpi4py must be installed for this functionality.
+In order to tell the script to divide training tasks across 
+ranks pass the `-p/--parallel` flag to the script.
+Then it can be run as:
+
+```bash
+mpirun -np 4 python lazyml.py config.json --parallel
 ```
 
 # Config File Format

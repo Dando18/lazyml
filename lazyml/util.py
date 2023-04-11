@@ -53,7 +53,9 @@ def parse_columns(data: dict, dataset):
         dataset: dataset object
     """
     num_column_params = sum(
-        1 for k in data.keys() if k in ["columns", "all-columns-except", "columns-regex"]
+        1
+        for k in data.keys()
+        if k in ["columns", "all-columns-except", "columns-regex"]
     )
     if num_column_params > 1:
         raise ValueError("Too many column parameters")
@@ -65,7 +67,7 @@ def parse_columns(data: dict, dataset):
     elif "columns-regex" in data:
         reg = re.compile(data.pop("columns-regex"))
         data["columns"] = list(filter(reg.match, dataset.train.columns))
-    
+
     return data["columns"]
 
 
