@@ -7,6 +7,7 @@ import logging
 
 # tpl imports
 from alive_progress import alive_it
+from mpi4py import MPI
 
 # local imports
 from lazyml.util import without, parse_columns
@@ -29,6 +30,7 @@ def get_args():
     parser = ArgumentParser(description="Brute force ML tool")
     parser.add_argument("config", type=str, help="config json")
     parser.add_argument("-o", "--output", type=str, help="output path")
+    parser.add_argument('-p', '--parallel', action='store_true', help='compute in parallel with MPI')
     parser.add_argument(
         "--seed", type=int, default=42, help="seed for numpy/pandas/sklearn"
     )
@@ -53,21 +55,27 @@ def main():
         format="%(asctime)s [%(levelname)s] -- %(message)s", level=numeric_level
     )
 
-    with open(args.config, "r") as fp:
-        config = json.load(fp)
+    if args.parallel:
+        from mpi4py import MPI
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
 
-    # read in dataset
-    logging.info("Loading dataset...")
-    dataset = get_dataset(seed=args.seed, **config["data"])
-    logging.info("Dataset loaded.")
+    if not args.parallel or rank == 0:
+        with open(args.config, "r") as fp:
+            config = json.load(fp)
 
-    # preprocess dataset
-    logging.info("Preprocessing...")
-    for preprocess_step in alive_it(config["preprocess"], title="Preprocessing"):
-        parse_columns(preprocess_step, dataset)
-        preprocess(preprocess_step["name"], dataset, **without(preprocess_step, "name"))
-    logging.debug("Post-preprocessing columns: " + ", ".join(dataset.train.columns))
-    logging.info("Done preprocessing.")
+        # read in dataset
+        logging.info("Loading dataset...")
+        dataset = get_dataset(seed=args.seed, **config["data"])
+        logging.info("Dataset loaded.")
+
+        # preprocess dataset
+        logging.info("Preprocessing...")
+        for preprocess_step in alive_it(config["preprocess"], title="Preprocessing"):
+            parse_columns(preprocess_step, dataset)
+            preprocess(preprocess_step["name"], dataset, **without(preprocess_step, "name"))
+        logging.debug("Post-preprocessing columns: " + ", ".join(dataset.train.columns))
+        logging.info("Done preprocessing.")
 
     # dim reduce parameter
     dim_reduce_config = (
@@ -77,7 +85,7 @@ def main():
     )
 
     # train
-    logging.info("Training...")
+    logging.info("Training{}...".format(f" on rank {rank}" if args.parallel else ""))
     training_config = config["train"]
     if "X" in training_config and "y" in training_config:   # x and y
         X_columns = parse_columns(training_config['X'], dataset)
