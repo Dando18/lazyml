@@ -98,11 +98,6 @@ def train_clustering(
     if X_columns is None and y_columns is None:
         raise ValueError("Must provide at least 1 of 'X_columns' or 'y_columns'.")
 
-    if X_columns is None:
-        X_columns = dataset.all_columns_except(y_columns)
-    if y_columns is None:
-        y_columns = dataset.all_columns_except(X_columns)
-
     X_columns = expand_one_hot_columns(X_columns, dataset)
     y_columns = expand_one_hot_columns(y_columns, dataset)
 
