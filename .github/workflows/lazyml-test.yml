@@ -50,7 +50,7 @@ jobs:
         python lazyml.py tests/test-lda.json
     - name: MPI test
       run: |
-        mpirun -np 2 lazyml.py tests/test-classification.json -p
-        mpirun -np 4 lazyml.py tests/test-regression.json -p
-        mpirun -np 2 lazyml.py tests/test-clustering.json -p
-        mpirun -np 2 lazyml.py tests/test-pca.json -p
+        mpirun -np 2 python lazyml.py tests/test-classification.json -p
+        mpirun -np 4 python lazyml.py tests/test-regression.json -p
+        mpirun -np 2 python lazyml.py tests/test-clustering.json -p
+        mpirun -np 2 python lazyml.py tests/test-pca.json -p
