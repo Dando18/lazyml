@@ -47,3 +47,6 @@ jobs:
       run: |
         python lazyml.py tests/test-pca.json
         python lazyml.py tests/test-lda.json
+    - name: MPI test
+      run: |
+        mpirun -np 2 lazyml.py tests/test-classification.json -p
