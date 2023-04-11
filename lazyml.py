@@ -7,7 +7,6 @@ import logging
 
 # tpl imports
 from alive_progress import alive_it
-from mpi4py import MPI
 
 # local imports
 from lazyml.util import without, parse_columns
