@@ -9,7 +9,7 @@
     ],
     "train": {
         "task": "classification",
-        "y_columns": ["class"],
+        "y": {"columns": ["class"]},
         "metrics": ["accuracy", "f1"],
         "models": ["Dummy", "RandomForest", "SGD", "AdaBoost", "SVM"]
     }

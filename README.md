@@ -36,8 +36,8 @@ Here's a simple classification config for the UCI iris dataset:
     ],
     "train": {
         "task": "classification",
-        "X_columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"],
-        "y_columns": ["Species"],
+        "X": {"columns": ["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]},
+        "y": {"columns": ["Species"]},
         "metrics": ["accuracy"],
         "models": "all-tuned"
     }
@@ -72,7 +72,7 @@ Possible preprocessing names are:
 - `"one_hot_encode"`: one-hot-encode columns. See [pandas.get_dummies](https://pandas.pydata.org/docs/reference/api/pandas.get_dummies.html).
 - `"binarize"`: Binarize values by some threshold. See [sklearn.preprocessing.Binarize](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Binarize.html).
 
-The columns to apply the preprocessing step are given by `"columns"` or `"all-columns-except"`. The latter means to take the converse subset of column names and apply to those.
+The columns to apply the preprocessing step are given by `"columns"`, `"all-columns-except"`, or `"columns-reg"`. `"all-columns-except"` means to take the converse subset of column names and apply to those. `"columns-reg"` will take all columns matching a regex pattern.
 
 Any additional arguments are passed to the underlying preprocessing method. For instance, `norm="l2"` or `norm="l1"` can be passed to `"normalize"` with an additional entry `"norm": "l1"`.
 
@@ -94,7 +94,8 @@ The type of training task is given by `"task": ...` and can be one of
 - `"regression"` Train regressors on the dataset.
 - `"clustering"` Cluster training dataset.
 
-The inputs to the model, _X_, and output targets, _y_, are given by `"X_columns": [...]` and `"y_columns": [...]`. If one is omitted, then it is assumed to be the converse of the other.
+The inputs to the model, _X_, and output targets, _y_, are given by `"X": {...}` and `"y": {...}`. If one is omitted, then it is assumed to be the converse of the other. The value to _X_ or _y_ is a column specification object `{"columns": [...]}`, `{"all-columns-except": "..."}`, or 
+`{"columns-reg": "..."}`.
 
 Training objectives are given by the `"metrics": [...]` keyword.
 Each of these are recorded during training and the best model for

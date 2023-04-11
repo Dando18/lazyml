@@ -1,6 +1,7 @@
 # std imports
 import copy
 import logging
+import re
 from typing import Any, Iterable, Optional, Union
 
 # tpl imports
@@ -45,13 +46,14 @@ def unlistify(x: Iterable[Any]) -> Any:
 def parse_columns(data: dict, dataset):
     """Handle `all-columns-except` option when providing columns as option. If given, then expands into the
     converse set of columns.
+    If `columns-reg` is present, then column names are expanded from regex.
 
     Args:
         data: a dict that might have some column related parameters.
         dataset: dataset object
     """
     num_column_params = sum(
-        1 for k in data.keys() if k in ["columns", "all-columns-except"]
+        1 for k in data.keys() if k in ["columns", "all-columns-except", "columns-regex"]
     )
     if num_column_params > 1:
         raise ValueError("Too many column parameters")
@@ -60,6 +62,11 @@ def parse_columns(data: dict, dataset):
         pass  # do nothing in this case
     elif "all-columns-except" in data:
         data["columns"] = dataset.all_columns_except(data.pop("all-columns-except"))
+    elif "columns-regex" in data:
+        reg = re.compile(data.pop("columns-regex"))
+        data["columns"] = list(filter(reg.match, dataset.train.columns))
+    
+    return data["columns"]
 
 
 def expand_one_hot_columns(columns: Iterable[str], dataset) -> Iterable[str]:

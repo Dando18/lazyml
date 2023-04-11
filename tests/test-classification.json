@@ -9,8 +9,8 @@
     ],
     "train": {
         "task": "classification",
-        "X_columns": ["sepal.length", "sepal.width", "petal.length", "petal.width"],
-        "y_columns": ["variety"],
+        "X": {"columns": ["sepal.length", "sepal.width", "petal.length", "petal.width"]},
+        "y": {"columns": ["variety"]},
         "metrics": ["accuracy"],
         "models": "all"
     }

@@ -8,7 +8,7 @@
     ],
     "train": {
         "task": "classification",
-        "y_columns": ["label"],
+        "y": {"columns": ["label"]},
         "metrics": ["accuracy"],
         "models": ["Dummy", "Ridge"]
     }

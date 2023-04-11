@@ -12,10 +12,10 @@
     ],
     "train": {
         "task": "regression",
-        "X_columns": ["school", "sex", "age", "address", "Pstatus", "Medu", "Fedu", "Mjob", "Fjob", "reason", "guardian",
+        "X": {"columns": ["school", "sex", "age", "address", "Pstatus", "Medu", "Fedu", "Mjob", "Fjob", "reason", "guardian",
             "famsize", "traveltime", "studytime", "failures", "schoolsup", "famsup", "paid", "activities", "nursery", 
-            "higher", "internet", "romantic", "famrel", "freetime", "goout", "health", "absences", "Walc", "Dalc"],
-        "y_columns": ["G3"],
+            "higher", "internet", "romantic", "famrel", "freetime", "goout", "health", "absences", "Walc", "Dalc"]},
+        "y": {"columns": ["G3"]},
         "metrics": ["neg_mean_absolute_error"],
         "models": "all"
     }

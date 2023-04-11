@@ -10,7 +10,7 @@
     "dimensionality_reduction": {"name":"PCA", "n_components": 3},
     "train": {
         "task": "classification",
-        "y_columns": ["variety"],
+        "y": {"columns": ["variety"]},
         "metrics": ["accuracy"],
         "models": "all"
     }

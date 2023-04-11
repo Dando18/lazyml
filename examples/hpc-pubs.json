@@ -1,0 +1,17 @@
+{
+    "data": {
+        "train": "./datasets/pub-data.csv",
+        "test_split": "0.1"
+    },
+    "preprocess": [
+        {"name": "minmax_scale", "columns": ["year", "referenceCount", "influentialCitationCount"]}
+    ],
+    "dimensionality_reduction": {"name": "PCA", "n_components": 50},
+    "train": {
+        "task": "regression",
+        "X": {"columns-regex": "embedding_[\\d]+"},
+        "y": {"columns": ["citationCount"]},
+        "metrics": ["neg_mean_absolute_error"],
+        "models": ["Linear", "XGB", "AdaBoost", "Dummy"]
+    }
+}

@@ -10,7 +10,7 @@
     ],
     "train": {
         "task": "regression",
-        "y_columns": ["quality"],
+        "y": {"columns": ["quality"]},
         "metrics": ["neg_mean_absolute_error"],
         "models": "all"
     }
